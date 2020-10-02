@@ -92,7 +92,7 @@ public class Client extends Application{
             //Uzatvorenie spojenia
             connectionSocket.close();
 
-            //Po prijati HTML stranky sa zobrazi GUI so strankou
+            //Po prijati HTML stranky sa zobrazi GUI so strankou. Do JavaFX sa ako argument posle prijate HTML ako string
             launch(new String(content));
         } catch (Exception e){
             System.out.println("Chyba spojenia k serveru, koniec");
@@ -114,13 +114,15 @@ public class Client extends Application{
             int A;
             int b = new Random().nextInt(10000);
             int B;
+            //Prijme sa  p,g,A
             p = ByteConverter.fromByteArray(input.readNBytes(4));
             g = ByteConverter.fromByteArray(input.readNBytes(4));
             A = ByteConverter.fromByteArray(input.readNBytes(4));
-
+            //Vypocita sa B
             B = (int) Math.pow(g, b) % p;
+            //Odosle sa B
             output.write(ByteConverter.toByteArray(B));
-
+            //Vypocita sa kluc
             key = (int) Math.pow(A, b) % p;
 
         } catch (Exception e){
