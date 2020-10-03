@@ -39,6 +39,7 @@ public class Server {
             try {
                 serverSocket = new ServerSocket(80);
                 connectionSocket = serverSocket.accept();
+
                 //Vymena kluca
                 int key;
                 try {
@@ -48,15 +49,15 @@ public class Server {
                     return;
                 }
 
+                //Otvorenie suboru
                 File file = new File(filename);
                 if(!file.exists()){
                     System.out.println("Subor bol zmazany alebo presunuty, koniec");
                     throw new IOException("Subor neexistuje");
                 }
-
                 Scanner reader = new Scanner(file);
 
-                //Precita sa subor
+                //Precita sa HTML subor
                 StringBuilder fileContent = new StringBuilder();
                 while (reader.hasNextLine()) {
                     fileContent.append(reader.nextLine());
@@ -69,7 +70,7 @@ public class Server {
                 //Zasifrovane RC4 sifrou sa odosle dlzka HTML v Bajtoch a nasledne samotny obsah HTML
                 RC4.send(fileContent.length(), key, output);
                 RC4.send(fileContent.toString(), key, output);
-                
+
                 //Po odoslani server uzatvara spojenie
                 connectionSocket.close();
                 serverSocket.close();
