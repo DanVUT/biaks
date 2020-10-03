@@ -1,7 +1,7 @@
-package sk.tuke.server;
+package sk.tuke;
 
-import sk.tuke.communication.ByteConverter;
-import sk.tuke.encryption.RC4;
+import sk.tuke.ByteConverter;
+import sk.tuke.RC4;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -48,8 +48,6 @@ public class Server {
                     return;
                 }
 
-                OutputStream output = connectionSocket.getOutputStream();
-
                 File file = new File(filename);
                 if(!file.exists()){
                     System.out.println("Subor bol zmazany alebo presunuty, koniec");
@@ -64,10 +62,14 @@ public class Server {
                     fileContent.append(reader.nextLine());
                     fileContent.append('\n');
                 }
+                reader.close();
+
+                OutputStream output = connectionSocket.getOutputStream();
 
                 //Zasifrovane RC4 sifrou sa odosle dlzka HTML v Bajtoch a nasledne samotny obsah HTML
                 RC4.send(fileContent.length(), key, output);
                 RC4.send(fileContent.toString(), key, output);
+                
                 //Po odoslani server uzatvara spojenie
                 connectionSocket.close();
                 serverSocket.close();
@@ -93,10 +95,12 @@ public class Server {
             InputStream input = connectionSocket.getInputStream();
             OutputStream output = connectionSocket.getOutputStream();
 
-            //Nahodne vygenerovane p,g,a
-            int p = new Random().nextInt(1000000);
-            int g = new Random().nextInt(100);
-            int a = new Random().nextInt(10000);
+            //p sa vygeneruje ako jedno z prvych 100 tisic prvocisel
+            int p = Prime.generatePrime(new Random().nextInt(100000));
+            //g sa vygeneruje ako jedno z prvych 8 prvocisel
+            int g = Prime.generatePrime(new Random().nextInt(7));
+            //a sa vygeneruje ako nahodne cislo z rozmedzia od 0 do 7 z dôvodu, aby zbytocne nepretekal int buffer
+            int a = new Random().nextInt(7);
             //Vypocitanie A podla rovnice (g^a)%p
             int A = (int)Math.pow(g, a) % p;
             int B;

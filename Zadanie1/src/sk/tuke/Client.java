@@ -1,25 +1,17 @@
-package sk.tuke.client;
+package sk.tuke;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import sk.tuke.communication.ByteConverter;
-import sk.tuke.encryption.RC4;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Random;
-import java.awt.*;
 
 
 public class Client extends Application{
@@ -112,7 +104,8 @@ public class Client extends Application{
             int p;
             int g;
             int A;
-            int b = new Random().nextInt(10000);
+            //b sa vyberie ako male nahodne cislo od 0 do 7 aby zbytocne nepretekal ciselny buffer pri pocitani B
+            int b = new Random().nextInt(7);
             int B;
             //Prijme sa  p,g,A
             p = ByteConverter.fromByteArray(input.readNBytes(4));

@@ -1,4 +1,4 @@
-package sk.tuke.communication;
+package sk.tuke;
 
 import java.nio.ByteBuffer;
 
