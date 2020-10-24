@@ -64,7 +64,12 @@ public class Podpis {
     *
     * -v SIGNED_FILE PUBLIC_KEY - verifikuje sa podpisany subor voci zadanemu PUBLIC_KEY*/
     public static void main(String[] args) {
-        parseArgs(args);
+        try {
+            parseArgs(args);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return;
+        }
         switch (ACTION){
             case generate:
                 try {
@@ -98,6 +103,7 @@ public class Podpis {
                         return;
                     }
                 }
+                System.out.println("File was signed successfully");
                 break;
             case verify:
                 PublicKey publicKey;
@@ -118,7 +124,7 @@ public class Podpis {
                 if(result){
                     System.out.println("Signature was successfully verified with given Public Key");
                 } else{
-                    System.out.println("Signature was NOT verified with given Public Key");
+                    System.out.println("Signature could NOT be verified with given Public Key");
                 }
         }
     }
