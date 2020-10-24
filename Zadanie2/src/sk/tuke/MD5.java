@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MD5 {
+    //Inicializacna cast MD5 podla RFC1321
     private static final int AI = 0x67452301;
     private static final int BI = (int)0xEFCDAB89L;
     private static final int CI = (int)0x98BADCFEL;
@@ -23,13 +24,14 @@ public class MD5 {
             6, 10, 15, 21
     };
 
-    public static byte[] calculateMD5(String message){
-        byte[] messageBytes = message.getBytes();
+    //Metoda kalkulujuca md5
+    public static byte[] calculateMD5(byte[] messageBytes){
         byte[] paddedMessageBytes = addPaddingBits(messageBytes);
         byte[] appendedLengthMessageBytes = appendLength(paddedMessageBytes, messageBytes);
         return digestMessage(appendedLengthMessageBytes);
     }
 
+    //Metoda prida padding bity k hashovanej sprave tak, aby vysledok bol 64 bitov od delitelnosti 512
     private static byte[] addPaddingBits(byte[] messageBytes){
         int messageLengthInBits = Helper.calculateBits(messageBytes);
         int modulo =  messageLengthInBits % 512;
@@ -51,6 +53,7 @@ public class MD5 {
         return paddedMessageBytes;
     }
 
+    //K vysledku predchadzajucej metody prida 64 bitovu reprezentaciu dlzky povodnej spravy v bitoch
     private static byte[] appendLength(byte[] paddedMessageBytes, byte[] originalMessage){
         int lengthInBytes = originalMessage.length;
         long lengthInBits = (lengthInBytes * 8);
@@ -64,6 +67,7 @@ public class MD5 {
         return appendedLengthMessageBytes;
     }
 
+    //Algoritmus vytvori vysledny MD5 hash podla RFC1321 standardu
     private static byte[] digestMessage(byte[] message){
         int numberOfBlocks = message.length / 64;
         int blockWidthInBytes = 64;
@@ -72,8 +76,8 @@ public class MD5 {
         int B = BI;
         int C = CI;
         int D = DI;
+
         for(int i = 0; i < numberOfBlocks; i++){
-            //Copy block into int array
             for(int j = 0; j < blockWidthInBytes; j++){
                 int tmp = ((int)message[i * blockWidthInBytes + j]) << 24;
                 block[j / 4] = tmp | (block[j/4] >>> 8);
@@ -129,11 +133,27 @@ public class MD5 {
         int count = 0;
         for (int i = 0; i < 4; i++)
         {
-            int n = (i == 0) ? A : ((i == 1) ? B : ((i == 2) ? C : D));
+            int num = 0;
+            switch (i){
+                case 0:
+                    num = A;
+                    break;
+                case 1:
+                    num = B;
+                    break;
+                case 2:
+                    num = C;
+                    break;
+                case 3:
+                    num = D;
+                    break;
+                default:
+                    break;
+            }
             for (int j = 0; j < 4; j++)
             {
-                md5[count++] = (byte)n;
-                n >>>= 8;
+                md5[count++] = (byte)num;
+                num >>>= 8;
             }
         }
         return md5;
