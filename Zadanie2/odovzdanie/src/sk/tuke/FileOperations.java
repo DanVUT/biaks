@@ -178,7 +178,9 @@ public class FileOperations {
         }
 
         byte[] message = new byte[content.length - index];
-        System.arraycopy(content, index, message, 0, content.length - index);
+        for(int i = 0; i < message.length; i++){
+            message[i] = content[index++];
+        }
 
         BigInteger md5 = new BigInteger(1, MD5.calculateMD5(message));
         BigInteger md5decipher = RSA.cipherMD5withPublicKey(md5cipher, publicKey);
