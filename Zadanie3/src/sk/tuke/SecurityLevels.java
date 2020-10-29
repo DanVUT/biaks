@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -37,7 +38,9 @@ public class SecurityLevels {
             fis.close();
             securityLevels.clear();
             for(Object o : properties.keySet()){
-                setSecurityLevel((String)o, Integer.parseInt(properties.getProperty((String)o)));
+                String name = (String)o;
+                int value = Integer.parseInt(properties.getProperty(name));
+                setSecurityLevel(name, value);
             }
         } catch (FileNotFoundException e){
             throw new FileNotFoundException("Security levels are not defined. Please run the program with argument(s) -setl [String...security_levels]");
@@ -75,7 +78,9 @@ public class SecurityLevels {
     public static String toStr(){
         StringBuilder sb = new StringBuilder();
         sb.append("Level Name : Level Rank\n");
-        for(String key : securityLevels.keySet()){
+        String[] securityLevelsKeys = securityLevels.keySet().toArray(new String[0]);
+        Arrays.sort(securityLevelsKeys);
+        for(String key : securityLevelsKeys){
             sb.append(key).append(":\t\t").append(securityLevels.get(key)).append("\n");
         }
         sb.append("\n").append("\n");

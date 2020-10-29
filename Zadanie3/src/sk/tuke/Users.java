@@ -1,6 +1,7 @@
 package sk.tuke;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -39,7 +40,7 @@ public class Users {
                     String username = (String) o;
                     String userLevel = properties.getProperty(username);
                     setUser(username, userLevel);
-                } catch (IllegalArgumentException e){
+                } catch (InvalidValueException e){
                     file.delete();
                     throw new InvalidValueException("Users file corrupted. It contains security level that is not defined. Deleting users file to prevent lack of integrity.");
                 }
@@ -66,7 +67,7 @@ public class Users {
         int changingUsernameLevel = Users.getUserSecurityLevelValue(changingUsername);
         int newUsernameLevel = SecurityLevels.getSecurityLevelValue(level);
         if(newUsernameLevel > changingUsernameLevel){
-            throw new InvalidValueException("User creation failed because security level for new user is higher then security level of existing user");
+            throw new InvalidValueException("User creation failed because security level for new user is higher than security level of existing user");
         }
         SecurityLevels.getSecurityLevelValue(level);
         users.put(username, level);
@@ -82,7 +83,9 @@ public class Users {
     public static String toStr(){
         StringBuilder sb = new StringBuilder();
         sb.append("Username : Security Level\n");
-        for(String key : users.keySet()){
+        String[] usersKeys = users.keySet().toArray(new String[0]);
+        Arrays.sort(usersKeys);
+        for(String key : usersKeys){
             sb.append(key).append(":\t\t").append(users.get(key)).append("\n");
         }
         sb.append("\n").append("\n");

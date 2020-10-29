@@ -1,11 +1,30 @@
 package sk.tuke;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Main {
+/*
+* Hlavna trieda
+*
+* Mozne argumenty programu su:
+*
+* -setl [String...security_levels] - Definuju bezpecnostne urovne programu. Pri nedefinovani volitelneho argumentu sa pouziju default levely: public, confidential, secret, top secret
+*
+* -setu newUsername security_level changingUsername - Definuje noveho uzivatela s danou bezpecnostnou urovnou. Je mozne pouzit pouzivatelske meno "admin", ktore ma najvyssiu pravomoc
+*
+* -setf filename security_level username - Definuje bezpecnostnu uroven suboru. Uzivatel vsak moze definovat maximalne svoju bezpecnostnu uroven
+*
+* -r filename username - Odtestuje, ci dany uzivatel ma pristup na citanie daneho suboru/priecinku
+*
+* -w filename username - Odtestuje, ci dany uzivatel ma pristup na zapisovanie do daneho suboru/priecinku
+*
+* -ls - vypise vsetky bezpecnostne urovne, definovanych uzivatelov a subory
+* */
+
+public class Alc {
     private enum Action{
         SETL,
         SETF,
@@ -47,16 +66,22 @@ public class Main {
                     filename = args[1];
                     level = args[2];
                     username = args[3];
+
+                    filename = Path.of(filename).normalize().toAbsolutePath().toString();
                     break;
                 case "-r":
                     action = Action.R;
                     filename = args[1];
                     username = args[2];
+
+                    filename = Path.of(filename).normalize().toAbsolutePath().toString();
                     break;
                 case "-w":
                     action = Action.W;
                     filename = args[1];
                     username = args[2];
+
+                    filename = Path.of(filename).normalize().toAbsolutePath().toString();
                     break;
                 case "-ls":
                     action = Action.LS;
@@ -69,14 +94,8 @@ public class Main {
         }
     }
 
-
     public static void main(String[] args) throws IOException, InvalidValueException {
-        try {
-            parseArgs(args);
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            return;
-        }
+        parseArgs(args);
 
         if (action == Action.SETL) {
             SecurityLevels.setSecurityLevels(securityLevels.toArray(new String[0]));
@@ -90,10 +109,12 @@ public class Main {
             case SETU:
                 Users.setUser(username, level, changingUsername);
                 Users.saveUsers();
+                System.out.println("User was created successfully");
                 break;
             case SETF:
                 Files.setFile(filename, level, username);
                 Files.saveFiles();
+                System.out.println("File security level was defined successfully");
                 break;
             case R:
                 if(AccessRightsChecker.hasReadRights(filename, username)){

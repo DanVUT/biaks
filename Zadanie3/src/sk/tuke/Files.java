@@ -1,6 +1,8 @@
 package sk.tuke;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Files {
@@ -80,7 +82,6 @@ public class Files {
         files.put(path.getAbsolutePath(), level);
 
         if(path.isDirectory()){
-            files.put(path.getAbsolutePath(), level);
             List<File> directoryFiles = new ArrayList<>(Arrays.asList(Objects.requireNonNull(path.listFiles())));
             for(File file : directoryFiles){
                 setFile(file.getAbsolutePath(), level, username);
@@ -89,8 +90,10 @@ public class Files {
     }
 
     public static int getFileSecurityLevelValue(String path) throws InvalidValueException {
-        if(!(new File(path)).exists()){
-            throw new IllegalArgumentException("Given file does not exist");
+        File file = new File(path);
+        if(!file.exists()){
+            files.remove(path);
+            throw new IllegalArgumentException("Given file does not exist.");
         }
         if(!files.containsKey(path)){
             return 0;
@@ -103,7 +106,9 @@ public class Files {
     public static String toStr(){
         StringBuilder sb = new StringBuilder();
         sb.append("Filepath : Level Rank\n");
-        for(String key : files.keySet()){
+        String[] filesKeys = files.keySet().toArray(new String[0]);
+        Arrays.sort(filesKeys);
+        for(String key : filesKeys){
             sb.append(key).append(":\t\t").append(files.get(key)).append("\n");
         }
         sb.append("\n").append("\n");
