@@ -21,7 +21,7 @@ import java.util.*;
 * */
 
 class Alc {
-    private enum Action{
+    enum Action{
         SETL,
         SETF,
         SETU,
